@@ -45,8 +45,10 @@ WHERE nom_recette LIKE '%Salade%';
 les instructions de votre choix. Pensez à alimenter votre base de données en conséquence afin de 
 pouvoir lister les détails de cette recettes (ingrédients)
 
-INSERT INTO Recette (nom_recette, temps_preparation, instructions, id_categorie)
-VALUES ('Pâtes à la carbonara', 20, 'Instructions de préparation des pâtes à la carbonara', id_categorie_de_votre_choix);
+INSERT INTO recipe (recipe_name, preparation_time, instructions, id_category)
+VALUES ('Pâtes à la carbonara', 20, 'instructions', 2);
+INSERT INTO recipe_ingredients
+VALUES (4, 24, 1), (4, 18, 1), (4, 11, 1), (4, 8,1);
 
 
 
@@ -60,10 +62,12 @@ WHERE id_recette = 3;
 
 
 7- Supprimer la recette n°2 de la base de données
-
-DELETE FROM Recette
-WHERE id_recette = 2;
-
+SELECT r.nom_recette
+FROM Recette r
+LEFT JOIN Avoir a ON r.id_recette = a.id_recette
+LEFT JOIN Ingredient i ON a.id_INGREDIENT = i.id_INGREDIENT
+GROUP BY r.nom_recette
+HAVING MAX(prix_ingredient) <= 2 OR MAX(prix_ingredient) IS NULL;
 
 
 8- Afficher le prix total de la recette n°5
@@ -136,12 +140,16 @@ SET temps_preparation = temps_preparation - 5;
 15- Afficher les recettes qui ne nécessitent pas d’ingrédients coûtant plus de 2€ par unité de mesure
 
 
-SELECT r.nom_recette
-FROM Recette r
-LEFT JOIN Avoir a ON r.id_recette = a.id_recette
-LEFT JOIN Ingredient i ON a.id_INGREDIENT = i.id_INGREDIENT
-GROUP BY r.nom_recette
-HAVING MAX(prix_ingredient) <= 2 OR MAX(prix_ingredient) IS NULL;
+SELECT *
+FROM Recette
+WHERE id_recette 
+NOT IN (
+SELECT DISTINCT A.id_recette
+FROM Avoir A
+JOIN Ingredient I ON A.id_ingredient = I.id_ingredient
+WHERE I.prix_ingredient > 2
+);
+
 
 
 
@@ -150,10 +158,15 @@ HAVING MAX(prix_ingredient) <= 2 OR MAX(prix_ingredient) IS NULL;
 
 16- Afficher la / les recette(s) les plus rapides à préparer
 
-SELECT nom_recette, temps_preparation
-FROM Recette
-ORDER BY temps_preparation ASC
-LIMIT 3;
+SELECT *
+FROM recette
+WHERE temps_preparation = (
+SELECT MIN(temps_preparation)
+FROM recette
+);
+
+
+
 
 
 
@@ -161,10 +174,15 @@ LIMIT 3;
 17- Trouver les recettes qui ne nécessitent aucun ingrédient (par exemple la recette de la tasse d’eau 
 chaude qui consiste à verser de l’eau chaude dans une tasse)
 
-SELECT r.nom_recette
-FROM Recette r
-LEFT JOIN Avoir a ON r.id_recette = a.id_recette
-WHERE a.id_INGREDIENT IS NULL;
+SELECT *
+FROM recette
+WHERE id_recette 
+NOT IN (
+
+SELECT id_recette
+FROM avoir
+);
+
 
 
 
@@ -194,12 +212,16 @@ VALUES
 20- Bonus : Trouver la recette la plus coûteuse de la base de données (il peut y avoir des ex aequo, il est 
 donc exclu d’utiliser la clause LIMIT)
 
-SELECT nom_recette
-FROM Recette
-WHERE id_recette = (
-    SELECT id_recette
-    FROM Avoir
-    JOIN Ingredient ON Avoir.id_INGREDIENT = Ingredient.id_INGREDIENT
-    ORDER BY prix_ingredient DESC
-    LIMIT 1
+SELECT r.nom_recette, SUM(i.prix_ingredient * a.nb_quantite) AS cout_total
+FROM Recette r, avoir a, Ingredient i
+WHERE r.id_recette = a.id_recette
+AND a.id_ingredient = i.id_ingredient
+GROUP BY r.id_recette
+HAVING cout_total >= ALL(
+    SELECT SUM(i.prix_ingredient * a.nb_quantite) AS cout_total
+    FROM Recette r, avoir a, Ingredient i
+    WHERE r.id_recette = a.id_recette
+    AND a.id_ingredient = i.id_ingredient
+    GROUP BY r.id_recette
 );
+
