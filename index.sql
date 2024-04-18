@@ -54,7 +54,7 @@ VALUES ('Pâtes à la carbonara', 20, 'Instructions de préparation des pâtes �
 convenance)
 
 UPDATE Recette
-SET nom_recette = 'pizza ananas'
+SET nom_recette = 'Elan formation'
 WHERE id_recette = 3;
 
 
@@ -71,7 +71,7 @@ WHERE id_recette = 2;
 
 SELECT SUM(i.prix_ingredient * CAST(a.nb_quantite AS DECIMAL))
 FROM Ingredient i
-JOIN Avoir a ON i.id_INGREDIENT = a.id_INGREDIENT
+JOIN avoir a ON i.id_ingredient = a.id_ingredient
 WHERE a.id_recette = 5;
 
 
@@ -79,7 +79,7 @@ WHERE a.id_recette = 5;
 
 SELECT i.nom_ingredient, a.nb_quantite, i.prix_ingredient
 FROM Ingredient i
-JOIN Avoir a ON i.id_INGREDIENT = a.id_INGREDIENT
+JOIN avoir a ON i.id_INGREDIENT = a.id_INGREDIENT
 WHERE a.id_recette = 5;
 
 
@@ -94,7 +94,7 @@ VALUES ('Poivre', 2.5, 'cuillère à café');
 11- Modifier le prix de l’ingrédient n°12 (prix à votre convenance)
 
 UPDATE Ingredient
-SET prix_ingredient = Nouveau_prix
+SET prix_ingredient = 999999999
 WHERE id_INGREDIENT = 12;
 
 
@@ -135,19 +135,13 @@ SET temps_preparation = temps_preparation - 5;
 
 15- Afficher les recettes qui ne nécessitent pas d’ingrédients coûtant plus de 2€ par unité de mesure
 
-SELECT r.nom_recette
-FROM Recette r
-LEFT JOIN Recette_Ingrédient ri ON r.id_recette = ri.id_recette
-LEFT JOIN Ingrédient i ON ri.id_ingredient = i.id_ingredient
-WHERE i.prix / (SELECT COUNT(DISTINCT id_unite) FROM Ingrédient) <= 2
-GROUP BY r.id_recette;
 
 SELECT r.nom_recette
 FROM Recette r
 LEFT JOIN Avoir a ON r.id_recette = a.id_recette
 LEFT JOIN Ingredient i ON a.id_INGREDIENT = i.id_INGREDIENT
 GROUP BY r.nom_recette
-HAVING MAX(i.prix_ingredient) <= 2 OR MAX(i.prix_ingredient) IS NULL;
+HAVING MAX(prix_ingredient) <= 2 OR MAX(prix_ingredient) IS NULL;
 
 
 
@@ -159,7 +153,7 @@ HAVING MAX(i.prix_ingredient) <= 2 OR MAX(i.prix_ingredient) IS NULL;
 SELECT nom_recette, temps_preparation
 FROM Recette
 ORDER BY temps_preparation ASC
-LIMIT 1;
+LIMIT 3;
 
 
 
@@ -181,19 +175,19 @@ SELECT i.nom_ingredient, COUNT(a.id_recette) AS nombre_recettes
 FROM Ingredient i
 JOIN Avoir a ON i.id_INGREDIENT = a.id_INGREDIENT
 GROUP BY i.nom_ingredient
-HAVING COUNT(DISTINCT a.id_recette) >= 3;
+HAVING COUNT(DISTINCT a.id_recette) >= 1;
+
+--j'ai mis valeur 1 car je n'est pas d'ingredients utilisé au moin 3fois
 
 
 
 
 19- Ajouter un nouvel ingrédient à une recette spécifique
 
-INSERT INTO Recette_Ingrédient (id_recette, id_ingredient, quantite)
-VALUES (5, 21, quantite);
-
-INSERT INTO Avoir (id_recette, id_INGREDIENT, nb_quantite)
-VALUES (1, id_ingredient_tomate, '2');
-
+INSERT INTO Avoir (id_recette, id_ingredient, quantite)
+VALUES 
+    -- Mohamed
+    (1, 13, 4),
 
 
 
