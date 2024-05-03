@@ -9,6 +9,9 @@ CREATE TABLE Ingredient(
    PRIMARY KEY(id_ingredient)
 );
 
+
+
+
 CREATE TABLE Categorie(
    id_categorie INT AUTO_INCREMENT,
    nom_categorie VARCHAR(255),
