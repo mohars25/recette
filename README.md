@@ -1,3 +1,11 @@
+RECETTE MCD BDD
+
+Voici un bon exercice pour prendre en main l'organisation d'un MCD (Modèle Conceptuel de Données). Ensuite, grâce au script correspondant, nous pourrons créer notre base de données (BDD).
+
+Cela comprend évidemment des requêtes pour bien s'entraîner en vue de l'étape suivante.
+
+
+
 # recette
 ![Capture d'écran 2024-04-17 154236](https://github.com/mohars25/recette/assets/162590718/92f3cf21-3f95-4c29-90a9-ca41f8a5bcee)
 ![Capture d'écran 2024-04-17 154230](https://github.com/mohars25/recette/assets/162590718/66c2992c-06b6-4ce7-9ddc-34d15c9c5282)
